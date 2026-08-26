@@ -1,0 +1,280 @@
+/* ===========================================
+   VIBE TECH 3.0 - DESIGN SYSTEM & TOKENS
+   =========================================== */
+@import './components/utilities.css';
+
+
+:root {
+  /* Brand Colors - Logo Integration (Moderately) */
+  --bg-color: #03050c; /* Deeper black/navy */
+  --bg-surface: #0a0c16;
+  --bg-surface-light: #121524;
+  --bg-glass: rgba(7, 10, 20, 0.4);
+  --bg-glass-border: rgba(255, 255, 255, 0.03);
+  
+  /* Logo Colors */
+  --color-accent-primary: #9d4edd; /* Deep Purple from right side of V */
+  --color-accent-primary-light: #c77dff;
+  --color-accent-secondary: #00b4d8; /* Electric Blue from left side of V */
+  
+  /* Legacy/Core Variables used across stylesheets */
+  --primary: #00d9ff;
+  --secondary: #9d4edd;
+  
+  /* Text Colors */
+  --text-main: #F8FAFC;
+  --text-muted: #64748B;
+  --color-text-primary: #F8FAFC;
+  --color-text-secondary: #94A3B8;
+  --color-text-muted: #64748B;
+  --border-light: rgba(255, 255, 255, 0.05);
+
+  /* Gradients based on Logo */
+  --gradient-primary: linear-gradient(135deg, var(--color-accent-secondary) 0%, var(--color-accent-primary) 100%);
+  --gradient-secondary: linear-gradient(135deg, var(--color-accent-primary) 0%, var(--color-accent-primary-light) 100%);
+  --gradient-glow: linear-gradient(90deg, rgba(0, 180, 216, 0.15) 0%, rgba(157, 78, 221, 0.15) 100%);
+  --gradient-hero: radial-gradient(circle at top center, rgba(157, 78, 221, 0.15) 0%, transparent 60%);
+
+  /* Typography */
+  --font-heading: 'Sora', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+
+  /* Typography Sizes */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
+  --text-4xl: 2.25rem;
+  --text-5xl: 3rem;
+
+  /* Spacing */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+  --space-32: 8rem;
+  --space-48: 12rem;
+
+  /* Border Radius */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+
+  /* Transitions */
+  --transition-base: 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-fast: 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-normal: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-slow: 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ===========================================
+   GLOBAL RESETS & SELECTION
+   =========================================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent; /* Fix for mobile blue flash */
+}
+
+::selection {
+  background: rgba(0, 217, 255, 0.3); /* Electric Blue, semi-transparent */
+  color: #ffffff;
+}
+
+html, body {
+  font-family: var(--font-body);
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+main {
+  padding-top: 100px;
+}
+
+/* Base TechGrid Background */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 50px 50px;
+  background-position: center center;
+  z-index: -2;
+  pointer-events: none;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--text-main);
+  letter-spacing: -0.03em;
+}
+
+p {
+  color: var(--text-muted);
+}
+
+a {
+  color: var(--text-main);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+  outline: none;
+}
+
+a:hover, a:focus {
+  color: var(--primary);
+}
+
+a:active {
+  color: var(--secondary);
+}
+
+/* ===========================================
+   UTILITIES & LAYOUT
+   =========================================== */
+.container {
+  max-width: 1400px; /* Wider for asymmetrical layout */
+  margin: 0 auto;
+  padding: 0 var(--space-6);
+}
+
+.section {
+  padding: var(--space-32) 0;
+}
+
+.text-gradient {
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Glassmorphism Utilities */
+.glass-panel {
+  background: var(--bg-glass);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--bg-glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+}
+
+.glass-panel:hover {
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px 0 rgba(0, 180, 216, 0.1);
+}
+
+/* ===========================================
+   BUTTONS (MAGNETIC STYLE)
+   =========================================== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: 1.2rem 2.5rem;
+  border-radius: 100px;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 0.9rem;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: transform var(--transition-normal), background var(--transition-fast), box-shadow var(--transition-fast);
+  text-decoration: none;
+  border: none;
+  outline: none;
+  text-transform: uppercase;
+}
+
+.btn--primary {
+  background: var(--text-main);
+  color: var(--bg-color);
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.btn--primary::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: var(--gradient-primary);
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+  z-index: -1;
+}
+
+.btn--primary:hover {
+  transform: translateY(-4px);
+  color: #fff;
+  box-shadow: 0 15px 35px -5px rgba(157, 78, 221, 0.5), 0 0 15px rgba(0, 180, 216, 0.4);
+}
+
+.btn--primary:hover::before {
+  opacity: 1;
+}
+
+.btn--secondary {
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text-main);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+}
+
+.btn--secondary:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--color-accent-secondary);
+  box-shadow: 0 0 20px rgba(0, 180, 216, 0.2);
+}
+
+/* ===========================================
+   ANIMATIONS
+   =========================================== */
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-20px) rotate(2deg); }
+}
+
+@keyframes pulse-node {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(0, 217, 255, 0.4); }
+  50% { box-shadow: 0 0 0 15px rgba(0, 217, 255, 0); }
+}
+
+.animate-fade-up {
+  opacity: 0;
+  transform: translateY(30px);
+  animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fadeUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

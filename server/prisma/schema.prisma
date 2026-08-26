@@ -1,0 +1,60 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Lead {
+  id        String   @id @default(uuid())
+  name      String
+  company   String
+  whatsapp  String
+  email     String
+  source    String   // 'calculator', 'diagnostic', 'contact', 'cta'
+  createdAt DateTime @default(now())
+
+  // Relations
+  calculatorResult CalculatorResult?
+  diagnosticResult DiagnosticResult?
+
+  @@map("leads")
+}
+
+model CalculatorResult {
+  id           String @id @default(uuid())
+  leadId       String @unique
+  projectType  String
+  projectSize  String
+  aiRequired   String
+  integrations String
+  mobile       String
+  estimatedMin Int
+  estimatedMax Int
+
+  lead Lead @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  @@map("calculator_results")
+}
+
+model DiagnosticResult {
+  id                      String @id @default(uuid())
+  leadId                  String @unique
+  repetitiveTasks         String
+  customerContact         String
+  spreadsheets            String
+  systemsIntegration      String
+  aiUsage                 String
+  mainProblem             String
+  totalScore              Int
+  automationOpportunities Int
+
+  lead Lead @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  @@map("diagnostic_results")
+}

@@ -1,0 +1,25 @@
+/* ============================================
+   ABOUT PAGE
+   ============================================ */
+
+.about-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+}
+
+.about-block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.about-block p {
+  font-size: var(--text-lg);
+  line-height: var(--leading-relaxed);
+}
+
+.about-values h2 {
+  text-align: center;
+  margin-bottom: var(--space-8);
+}

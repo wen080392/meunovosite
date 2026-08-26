@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: vibetech-db
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USER:-vibetech}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-vibe1234}
+      POSTGRES_DB: ${DB_NAME:-vibetech_db}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  backend:
+    build: .
+    container_name: vibetech-backend
+    restart: always
+    ports:
+      - "3001:3001"
+    environment:
+      - DATABASE_URL=postgresql://${DB_USER:-vibetech}:${DB_PASSWORD:-vibe1234}@db:5432/${DB_NAME:-vibetech_db}?schema=public
+      - PORT=3001
+      - SMTP_USER=${SMTP_USER}
+      - SMTP_PASS=${SMTP_PASS}
+    depends_on:
+      - db
+    # Executa a migração do banco antes de iniciar o servidor
+    command: sh -c "npx prisma migrate deploy && npm run dev"
+
+volumes:
+  pgdata:
