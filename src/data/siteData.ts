@@ -1,4 +1,4 @@
-import type { ServiceItem, ProblemItem, PortfolioProject, CalculatorStep, DiagnosticStep } from '../types';
+import type { ServiceItem, ProblemItem, PortfolioProject, CalculatorStep, DiagnosticStep, CalculatorAnswers } from '../types';
 
 /* ============================================
    SERVICES DATA
