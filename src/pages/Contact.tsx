@@ -7,7 +7,7 @@ import './Contact.css';
 export default function Contact() {
   const [submitted, setSubmitted] = useState(false);
 
-  function handleSubmit(_data: LeadData) {
+  function handleSubmit(_data: any) {
     setSubmitted(true);
   }
 

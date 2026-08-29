@@ -37,7 +37,7 @@ export default function Calculator() {
     }
   }
 
-  function handleLeadSubmit(_data: LeadData) {
+  function handleLeadSubmit(_data: any) {
     // Lead is saved by the LeadForm component
   }
 
