@@ -1,0 +1,5 @@
+[phases.build]
+cmds = ["npx prisma generate"]
+
+[start]
+cmd = "node node_modules/ts-node/dist/bin.js src/index.ts"
