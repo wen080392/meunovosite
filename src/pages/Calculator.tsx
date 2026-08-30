@@ -158,7 +158,8 @@ export default function Calculator() {
                 onSubmit={handleLeadSubmit}
                 extraData={{
                   calculatorData: answers as CalculatorAnswers,
-                  estimatedRange: estimate ? `R$ ${estimate.min.toLocaleString('pt-BR')} - R$ ${estimate.max.toLocaleString('pt-BR')}` : undefined,
+                  estimatedMin: estimate?.min,
+                  estimatedMax: estimate?.max,
                 }}
                 submitLabel="Receber minha estimativa"
               />

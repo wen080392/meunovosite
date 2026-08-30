@@ -1,4 +1,6 @@
 import { useForm } from 'react-hook-form';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './LeadForm.css';
 
 interface LeadFormFields {
@@ -13,6 +15,7 @@ interface LeadFormProps {
   onSubmit?: (data: LeadFormFields) => void;
   submitLabel?: string;
   extraData?: Record<string, unknown>;
+  redirectToResult?: boolean;
 }
 
 /**
@@ -28,6 +31,7 @@ export default function LeadForm({
   onSubmit,
   submitLabel = 'Solicitar Demo',
   extraData,
+  redirectToResult = true,
 }: LeadFormProps) {
   const {
     register,
@@ -35,6 +39,8 @@ export default function LeadForm({
     reset,
     formState: { errors, isSubmitting, isSubmitSuccessful },
   } = useForm<LeadFormFields>();
+  const [submissionError, setSubmissionError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   const handleFormSubmit = async (data: LeadFormFields) => {
     try {
@@ -51,12 +57,12 @@ export default function LeadForm({
       reset();
       onSubmit?.(data);
 
-      // Se for calculadora ou diagnóstico, redirecionar para a página de resultados
-      if (resData.leadId && (source === 'calculator' || source === 'diagnostic')) {
-        window.location.href = `/resultado/${resData.leadId}`;
+      if (redirectToResult && resData.leadId && (source === 'calculator' || source === 'diagnostic')) {
+        navigate(`/resultado/${resData.leadId}`);
       }
     } catch (e) {
       console.error('Lead submission error:', e);
+      setSubmissionError('Não foi possível enviar suas informações. Tente novamente mais tarde.');
     }
   };
 
@@ -65,8 +71,13 @@ export default function LeadForm({
       <h2 id="lead-form-title" className="lead-form__title">
         Solicite sua demonstração grátis
       </h2>
-      {isSubmitSuccessful && (
+      {isSubmitSuccessful && !submissionError && (
         <p className="lead-form__success">✅ Obrigado! Entraremos em contato em breve.</p>
+      )}
+      {submissionError && (
+        <p className="lead-form__success" style={{ backgroundColor: '#fee2e2', color: '#b91c1c' }}>
+          ❌ {submissionError}
+        </p>
       )}
       <form onSubmit={handleSubmit(handleFormSubmit)} className="lead-form__wrapper" noValidate>
         <div className="lead-form__group">

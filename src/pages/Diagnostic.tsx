@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import SEO from '../components/SEO';
 import StepIndicator from '../components/StepIndicator/StepIndicator';
+import LeadForm from '../components/LeadForm/LeadForm';
 import { diagnosticSteps, calculateDiagnostic } from '../data/siteData';
 import type { DiagnosticAnswers } from '../types';
 import './Diagnostic.css';
@@ -9,6 +10,7 @@ export default function Diagnostic() {
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState<Partial<DiagnosticAnswers>>({});
   const [showResult, setShowResult] = useState(false);
+  const [showLeadForm, setShowLeadForm] = useState(false);
 
   const totalSteps = diagnosticSteps.length;
   const isLastStep = currentStep === totalSteps - 1;
@@ -19,7 +21,7 @@ export default function Diagnostic() {
     setAnswers(newAnswers);
 
     if (isLastStep) {
-      setShowResult(true);
+      setShowLeadForm(true);
     } else {
       setCurrentStep(prev => prev + 1);
     }
@@ -28,6 +30,8 @@ export default function Diagnostic() {
   function handleBack() {
     if (showResult) {
       setShowResult(false);
+    } else if (showLeadForm) {
+      setShowLeadForm(false);
     } else if (currentStep > 0) {
       setCurrentStep(prev => prev - 1);
     }
@@ -37,6 +41,12 @@ export default function Diagnostic() {
     setCurrentStep(0);
     setAnswers({});
     setShowResult(false);
+    setShowLeadForm(false);
+  }
+
+  function handleLeadSubmit() {
+    setShowLeadForm(false);
+    setShowResult(true);
   }
 
   const result = showResult ? calculateDiagnostic(answers as DiagnosticAnswers) : null;
@@ -62,7 +72,7 @@ export default function Diagnostic() {
 
       <section className="section diagnostic-section" id="diagnostic-form">
         <div className="container container--narrow">
-          {!showResult && (
+          {!showResult && !showLeadForm && (
             <StepIndicator
               currentStep={currentStep}
               totalSteps={totalSteps}
@@ -71,7 +81,7 @@ export default function Diagnostic() {
           )}
 
           {/* Question Steps */}
-          {!showResult && (
+          {!showResult && !showLeadForm && (
             <div className="diagnostic-step animate-fade-in" key={currentStep}>
               <div className="diagnostic-step__header">
                 <span className="diagnostic-step__area tag">
@@ -110,6 +120,28 @@ export default function Diagnostic() {
                   ← Voltar
                 </button>
               )}
+            </div>
+          )}
+
+          {/* Lead Form */}
+          {showLeadForm && (
+            <div className="calculator-lead animate-fade-in-up" id="diagnostic-lead-form">
+              <h2>Receba seu diagnóstico detalhado</h2>
+              <p>Preencha seus dados para liberar o resultado completo da sua análise de automação.</p>
+              <LeadForm
+                source="diagnostic"
+                onSubmit={handleLeadSubmit}
+                redirectToResult={false}
+                extraData={{
+                  diagnosticData: answers as DiagnosticAnswers,
+                  totalScore: calculateDiagnostic(answers as DiagnosticAnswers).totalScore,
+                  automationOpportunities: calculateDiagnostic(answers as DiagnosticAnswers).automationOpportunities,
+                }}
+                submitLabel="Ver meu resultado"
+              />
+              <button className="btn btn--ghost calculator-back" onClick={handleBack}>
+                ← Voltar
+              </button>
             </div>
           )}
 

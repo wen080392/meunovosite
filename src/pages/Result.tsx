@@ -42,8 +42,8 @@ export default function Result() {
     );
   }
 
-  const calc = data.calculatorResult?.[0];
-  const diag = data.diagnosticResult?.[0];
+  const calc = data.calculatorResult;
+  const diag = data.diagnosticResult;
 
   return (
     <>

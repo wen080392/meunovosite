@@ -80,13 +80,8 @@ app.post('/api/leads', async (req, res) => {
 // Rota da Calculadora
 app.post('/api/calculator', async (req, res) => {
   try {
-    const { name, company, whatsapp, email, source, calculatorData, estimatedRange } = req.body;
+    const { name, company, whatsapp, email, source, calculatorData, estimatedMin = 0, estimatedMax = 0 } = req.body;
     
-    // Parse range to ints (e.g. "R$ 3.000 – R$ 5.000")
-    // Simple fallback logic if parsing fails
-    let estimatedMin = 0;
-    let estimatedMax = 0;
-
     const lead = await prisma.lead.create({
       data: {
         name,
@@ -120,7 +115,7 @@ app.post('/api/calculator', async (req, res) => {
 // Rota do Diagnóstico
 app.post('/api/diagnostic', async (req, res) => {
   try {
-    const { name, company, whatsapp, email, source, diagnosticData } = req.body;
+    const { name, company, whatsapp, email, source, diagnosticData, totalScore = 0, automationOpportunities = 0 } = req.body;
 
     // Em um cenário real, recalcularíamos o score aqui no backend por segurança,
     // mas para a Fase 2 estamos apenas persistindo as respostas brutas por enquanto.
@@ -139,8 +134,8 @@ app.post('/api/diagnostic', async (req, res) => {
             systemsIntegration: diagnosticData.systemsIntegration,
             aiUsage: diagnosticData.aiUsage,
             mainProblem: diagnosticData.mainProblem,
-            totalScore: 0, // A ser calculado
-            automationOpportunities: 0 // A ser calculado
+            totalScore,
+            automationOpportunities
           }
         }
       },
