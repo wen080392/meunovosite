@@ -67,8 +67,8 @@ app.post('/api/leads', async (req, res) => {
       },
     });
 
-    // Dispara e-mail para notificar a nova lead
-    await sendLeadEmail(lead, 'contact');
+    // Dispara e-mail para notificar a nova lead em background (não bloqueia a resposta)
+    sendLeadEmail(lead, 'contact').catch(console.error);
 
     res.status(201).json({ success: true, leadId: lead.id });
   } catch (error: any) {
@@ -102,8 +102,8 @@ app.post('/api/calculator', async (req, res) => {
         }
       },
     });
-    // Envia o e-mail de notificação com os dados enriquecidos
-    await sendLeadEmail({ ...lead, calculatorData }, 'calculator');
+    // Envia o e-mail de notificação com os dados enriquecidos em background
+    sendLeadEmail({ ...lead, calculatorData }, 'calculator').catch(console.error);
 
     res.status(201).json({ success: true, leadId: lead.id });
   } catch (error) {
@@ -141,8 +141,8 @@ app.post('/api/diagnostic', async (req, res) => {
       },
     });
 
-    // Envia o e-mail com os resultados do diagnóstico
-    await sendLeadEmail({ ...lead, diagnosticData }, 'diagnostic');
+    // Envia o e-mail com os resultados do diagnóstico em background
+    sendLeadEmail({ ...lead, diagnosticData }, 'diagnostic').catch(console.error);
 
     res.status(201).json({ success: true, leadId: lead.id });
   } catch (error) {
