@@ -38,14 +38,23 @@ export default function LeadForm({
 
   const handleFormSubmit = async (data: LeadFormFields) => {
     try {
-      const response = await fetch('/api/leads', {
+      const endpoint = source === 'calculator' ? '/api/calculator' : source === 'diagnostic' ? '/api/diagnostic' : '/api/leads';
+      const response = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...data, source, ...extraData }),
       });
       if (!response.ok) throw new Error('Network error');
+      
+      const resData = await response.json();
+      
       reset();
       onSubmit?.(data);
+
+      // Se for calculadora ou diagnóstico, redirecionar para a página de resultados
+      if (resData.leadId && (source === 'calculator' || source === 'diagnostic')) {
+        window.location.href = `/resultado/${resData.leadId}`;
+      }
     } catch (e) {
       console.error('Lead submission error:', e);
     }

@@ -1,0 +1,57 @@
+.exit-popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(5px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.exit-popup {
+  background: var(--color-background-elevated);
+  border: 1px solid rgba(108, 99, 255, 0.3);
+  border-radius: var(--radius-lg);
+  padding: 3rem;
+  max-width: 500px;
+  width: 100%;
+  text-align: center;
+  position: relative;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.exit-popup__close {
+  position: absolute;
+  top: 1rem;
+  right: 1.5rem;
+  background: none;
+  border: none;
+  color: var(--color-text-secondary);
+  font-size: 2rem;
+  cursor: pointer;
+  transition: color var(--transition-fast);
+}
+
+.exit-popup__close:hover {
+  color: var(--color-text);
+}
+
+.exit-popup h2 {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.exit-popup p {
+  color: var(--color-text-secondary);
+  margin-bottom: 2rem;
+}
+
+.exit-popup__actions {
+  display: flex;
+  justify-content: center;
+}

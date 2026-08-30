@@ -145,6 +145,36 @@ app.post('/api/diagnostic', async (req, res) => {
   }
 });
 
+// GET /api/leads/:id - Busca o resultado de uma lead pelo ID para compartilhar link (Fase 2)
+app.get('/api/leads/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    // Validar se o id é um número para evitar erros no BD
+    const leadId = parseInt(id, 10);
+    if (isNaN(leadId)) {
+      return res.status(400).json({ success: false, error: 'ID inválido' });
+    }
+
+    const lead = await prisma.lead.findUnique({
+      where: { id: leadId },
+      include: {
+        calculatorResult: true,
+        diagnosticResult: true
+      }
+    });
+
+    if (!lead) {
+      return res.status(404).json({ success: false, error: 'Lead não encontrada' });
+    }
+
+    res.json({ success: true, lead });
+  } catch (error) {
+    console.error('Erro ao buscar lead:', error);
+    res.status(500).json({ success: false, error: 'Erro interno no servidor' });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`🚀 Servidor rodando na porta ${PORT}`);
 });

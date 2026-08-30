@@ -15,6 +15,8 @@ import Contact from './pages/Contact';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import Terms from './pages/Terms';
 import NotFound from './pages/NotFound';
+import Result from './pages/Result';
+import ExitIntentPopup from './components/ExitIntentPopup/ExitIntentPopup';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -41,11 +43,13 @@ function AppContent() {
           <Route path="/contato" element={<Contact />} />
           <Route path="/privacidade" element={<PrivacyPolicy />} />
           <Route path="/termos" element={<Terms />} />
+          <Route path="/resultado/:id" element={<Result />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
       <Footer />
       <WhatsAppFloat />
+      <ExitIntentPopup />
     </>
   );
 }

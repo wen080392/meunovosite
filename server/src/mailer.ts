@@ -61,6 +61,50 @@ export const sendLeadEmail = async (leadData: any, type: 'contact' | 'calculator
     `;
   }
 
+  // --- HTML PARA O CLIENTE (LEAD) ---
+  const clientSubject = type === 'contact' 
+    ? 'Recebemos seu contato - Vibe Tech' 
+    : type === 'calculator' 
+      ? 'Sua estimativa de projeto - Vibe Tech' 
+      : 'Seu Diagnóstico de Automação - Vibe Tech';
+
+  let clientHtmlContent = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
+      <h2 style="color: #6C63FF;">Olá, ${leadData.name}!</h2>
+      <p>Obrigado por se conectar com a Vibe Tech.</p>
+  `;
+
+  if (type === 'calculator' && leadData.calculatorData) {
+    clientHtmlContent += `
+      <p>Aqui está o resumo da estimativa do seu projeto:</p>
+      <div style="background: #f4f4f9; padding: 15px; border-radius: 8px;">
+        <ul style="list-style: none; padding: 0;">
+          <li><strong>Tipo de Projeto:</strong> ${leadData.calculatorData.projectType}</li>
+          <li><strong>Tamanho:</strong> ${leadData.calculatorData.projectSize}</li>
+          <li><strong>Precisa de IA?:</strong> ${leadData.calculatorData.aiRequired ? 'Sim' : 'Não'}</li>
+          <li><strong>Integrações:</strong> ${leadData.calculatorData.integrations ? 'Sim' : 'Não'}</li>
+          <li><strong>App Mobile:</strong> ${leadData.calculatorData.mobile ? 'Sim' : 'Não'}</li>
+        </ul>
+      </div>
+      <p><em>Esta é uma estimativa inicial. Nossa equipe entrará em contato em breve para uma análise técnica!</em></p>
+    `;
+  } else if (type === 'diagnostic' && leadData.diagnosticData) {
+    clientHtmlContent += `
+      <p>Aqui está o resumo do seu diagnóstico de automação:</p>
+      <div style="background: #f4f4f9; padding: 15px; border-radius: 8px;">
+        <p>Identificamos algumas oportunidades de automação com base nas suas respostas.</p>
+        <p><strong>Nossa equipe vai analisar seus dados e entrar em contato com uma proposta de automação.</strong></p>
+      </div>
+    `;
+  } else {
+    clientHtmlContent += `<p>Recebemos sua mensagem e entraremos em contato em até 24 horas.</p>`;
+  }
+
+  clientHtmlContent += `
+      <p style="margin-top: 30px;">Um abraço,<br><strong>Equipe Vibe Tech</strong></p>
+    </div>
+  `;
+
   try {
     await transporter.sendMail({
       from: `"Vibe Tech Notificações" <${process.env.SMTP_USER || 'vibetechvibe92@gmail.com'}>`,
@@ -68,7 +112,18 @@ export const sendLeadEmail = async (leadData: any, type: 'contact' | 'calculator
       subject: subject,
       html: htmlContent,
     });
-    console.log(`✅ E-mail enviado com sucesso para a lead ${leadData.name}`);
+    console.log(`✅ E-mail ADMIN enviado para: vibetechvibe92@gmail.com`);
+
+    // Envia o e-mail para o cliente (lead)
+    if (leadData.email) {
+      await transporter.sendMail({
+        from: `"Vibe Tech" <${process.env.SMTP_USER || 'vibetechvibe92@gmail.com'}>`,
+        to: leadData.email,
+        subject: clientSubject,
+        html: clientHtmlContent,
+      });
+      console.log(`✅ E-mail CLIENTE enviado para: ${leadData.email}`);
+    }
   } catch (error) {
     console.error('❌ Erro ao enviar e-mail da lead:', error);
   }

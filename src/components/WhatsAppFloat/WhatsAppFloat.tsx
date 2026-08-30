@@ -1,8 +1,20 @@
+import { useLocation } from 'react-router-dom';
 import './WhatsAppFloat.css';
 
 export default function WhatsAppFloat() {
+  const { pathname } = useLocation();
   const phoneNumber = '5598985170034';
-  const message = encodeURIComponent('Olá, gostaria de saber mais sobre os serviços da Vibe Tech');
+  
+  let baseMessage = 'Olá, gostaria de saber mais sobre os serviços da Vibe Tech';
+  if (pathname === '/calculadora') {
+    baseMessage = 'Olá, vi a calculadora de vocês e tenho uma dúvida sobre a estimativa de projeto!';
+  } else if (pathname === '/diagnostico') {
+    baseMessage = 'Olá, fiz o diagnóstico de automação no site e queria uma ajuda especializada!';
+  } else if (pathname.startsWith('/servicos')) {
+    baseMessage = 'Olá, vi os serviços no site e gostaria de conversar sobre um projeto!';
+  }
+  
+  const message = encodeURIComponent(baseMessage);
   const whatsappUrl = `https://wa.me/${phoneNumber}?text=${message}`;
 
   return (
