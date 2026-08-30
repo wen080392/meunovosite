@@ -60,9 +60,9 @@ app.post('/api/leads', async (req, res) => {
     await sendLeadEmail(lead, 'contact');
 
     res.status(201).json({ success: true, leadId: lead.id });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Erro ao salvar lead:', error);
-    res.status(500).json({ success: false, error: 'Erro interno no servidor' });
+    res.status(500).json({ success: false, error: 'Erro interno no servidor', details: error.message || String(error) });
   }
 });
 
