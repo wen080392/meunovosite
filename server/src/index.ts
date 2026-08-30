@@ -172,55 +172,24 @@ app.get('/api/leads/:id', async (req, res) => {
 // Cria as tabelas automaticamente ao iniciar (garante que funcionem no Railway)
 async function ensureDatabase() {
   try {
-    await prisma.$executeRawUnsafe(`
-      CREATE TABLE IF NOT EXISTS "leads" (
-        "id" TEXT NOT NULL DEFAULT gen_random_uuid(),
-        "name" TEXT NOT NULL,
-        "company" TEXT NOT NULL,
-        "whatsapp" TEXT NOT NULL,
-        "email" TEXT NOT NULL,
-        "source" TEXT NOT NULL,
-        "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        CONSTRAINT "leads_pkey" PRIMARY KEY ("id")
-      );
-    `);
-    await prisma.$executeRawUnsafe(`
-      CREATE TABLE IF NOT EXISTS "calculator_results" (
-        "id" TEXT NOT NULL DEFAULT gen_random_uuid(),
-        "leadId" TEXT NOT NULL,
-        "projectType" TEXT NOT NULL,
-        "projectSize" TEXT NOT NULL,
-        "aiRequired" TEXT NOT NULL,
-        "integrations" TEXT NOT NULL,
-        "mobile" TEXT NOT NULL,
-        "estimatedMin" INTEGER NOT NULL,
-        "estimatedMax" INTEGER NOT NULL,
-        CONSTRAINT "calculator_results_pkey" PRIMARY KEY ("id"),
-        CONSTRAINT "calculator_results_leadId_key" UNIQUE ("leadId")
-      );
-    `);
-    await prisma.$executeRawUnsafe(`
-      CREATE TABLE IF NOT EXISTS "diagnostic_results" (
-        "id" TEXT NOT NULL DEFAULT gen_random_uuid(),
-        "leadId" TEXT NOT NULL,
-        "repetitiveTasks" TEXT NOT NULL,
-        "customerContact" TEXT NOT NULL,
-        "spreadsheets" TEXT NOT NULL,
-        "systemsIntegration" TEXT NOT NULL,
-        "aiUsage" TEXT NOT NULL,
-        "mainProblem" TEXT NOT NULL,
-        "totalScore" INTEGER NOT NULL,
-        "automationOpportunities" INTEGER NOT NULL,
-        CONSTRAINT "diagnostic_results_pkey" PRIMARY KEY ("id"),
-        CONSTRAINT "diagnostic_results_leadId_key" UNIQUE ("leadId")
-      );
-    `);
+    // Habilitar extensão para gen_random_uuid()
+    await prisma.$executeRawUnsafe('CREATE EXTENSION IF NOT EXISTS "pgcrypto"');
+    
+    await prisma.$executeRawUnsafe(
+      'CREATE TABLE IF NOT EXISTS "leads" ("id" TEXT NOT NULL DEFAULT gen_random_uuid()::TEXT, "name" TEXT NOT NULL, "company" TEXT NOT NULL, "whatsapp" TEXT NOT NULL, "email" TEXT NOT NULL, "source" TEXT NOT NULL, "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP, CONSTRAINT "leads_pkey" PRIMARY KEY ("id"))'
+    );
+    await prisma.$executeRawUnsafe(
+      'CREATE TABLE IF NOT EXISTS "calculator_results" ("id" TEXT NOT NULL DEFAULT gen_random_uuid()::TEXT, "leadId" TEXT NOT NULL, "projectType" TEXT NOT NULL, "projectSize" TEXT NOT NULL, "aiRequired" TEXT NOT NULL, "integrations" TEXT NOT NULL, "mobile" TEXT NOT NULL, "estimatedMin" INTEGER NOT NULL, "estimatedMax" INTEGER NOT NULL, CONSTRAINT "calculator_results_pkey" PRIMARY KEY ("id"), CONSTRAINT "calculator_results_leadId_key" UNIQUE ("leadId"))'
+    );
+    await prisma.$executeRawUnsafe(
+      'CREATE TABLE IF NOT EXISTS "diagnostic_results" ("id" TEXT NOT NULL DEFAULT gen_random_uuid()::TEXT, "leadId" TEXT NOT NULL, "repetitiveTasks" TEXT NOT NULL, "customerContact" TEXT NOT NULL, "spreadsheets" TEXT NOT NULL, "systemsIntegration" TEXT NOT NULL, "aiUsage" TEXT NOT NULL, "mainProblem" TEXT NOT NULL, "totalScore" INTEGER NOT NULL, "automationOpportunities" INTEGER NOT NULL, CONSTRAINT "diagnostic_results_pkey" PRIMARY KEY ("id"), CONSTRAINT "diagnostic_results_leadId_key" UNIQUE ("leadId"))'
+    );
     // Add foreign keys if they don't exist (ignore error if they already do)
     try {
-      await prisma.$executeRawUnsafe(`ALTER TABLE "calculator_results" ADD CONSTRAINT "calculator_results_leadId_fkey" FOREIGN KEY ("leadId") REFERENCES "leads"("id") ON DELETE CASCADE ON UPDATE CASCADE;`);
+      await prisma.$executeRawUnsafe('ALTER TABLE "calculator_results" ADD CONSTRAINT "calculator_results_leadId_fkey" FOREIGN KEY ("leadId") REFERENCES "leads"("id") ON DELETE CASCADE ON UPDATE CASCADE');
     } catch (_) { /* FK already exists */ }
     try {
-      await prisma.$executeRawUnsafe(`ALTER TABLE "diagnostic_results" ADD CONSTRAINT "diagnostic_results_leadId_fkey" FOREIGN KEY ("leadId") REFERENCES "leads"("id") ON DELETE CASCADE ON UPDATE CASCADE;`);
+      await prisma.$executeRawUnsafe('ALTER TABLE "diagnostic_results" ADD CONSTRAINT "diagnostic_results_leadId_fkey" FOREIGN KEY ("leadId") REFERENCES "leads"("id") ON DELETE CASCADE ON UPDATE CASCADE');
     } catch (_) { /* FK already exists */ }
     console.log('✅ Banco de dados verificado e tabelas prontas!');
   } catch (error) {
