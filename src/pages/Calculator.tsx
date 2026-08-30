@@ -3,7 +3,7 @@ import SEO from '../components/SEO';
 import StepIndicator from '../components/StepIndicator/StepIndicator';
 import LeadForm from '../components/LeadForm/LeadForm';
 import { calculatorSteps, calculateEstimate } from '../data/siteData';
-import type { CalculatorAnswers, LeadData } from '../types';
+import type { CalculatorAnswers } from '../types';
 import './Calculator.css';
 
 export default function Calculator() {

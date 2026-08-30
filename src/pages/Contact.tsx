@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import SEO from '../components/SEO';
 import LeadForm from '../components/LeadForm/LeadForm';
-import type { LeadData } from '../types';
 import './Contact.css';
 
 export default function Contact() {
