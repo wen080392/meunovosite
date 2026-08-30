@@ -1,29 +1,16 @@
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 import dotenv from 'dotenv';
 
 dotenv.config();
 
-// Configuração do transportador de e-mail (usando Gmail como padrão para facilidade)
-const transporter = nodemailer.createTransport({
-  host: 'smtp.gmail.com',
-  port: 465,
-  secure: true,
-  auth: {
-    user: process.env.SMTP_USER || 'vibetechvibe92@gmail.com',
-    pass: process.env.SMTP_PASS || '',
-  }
-} as any); // cast para any para podermos passar configurações de rede internas se necessário
+// Inicializa o SDK do Resend com a chave fornecida via variável de ambiente
+const resend = new Resend(process.env.RESEND_API_KEY);
 
-// Força o Node a usar IPv4 para as requisições de rede (resolve o erro IPv6 no Railway)
-import dns from 'dns';
-dns.setDefaultResultOrder('ipv4first');
+// Endereço de remetente oficial. No Resend, para testes sem domínio validado, deve ser 'onboarding@resend.dev'
+// Se o usuário tiver um domínio validado, deve ser substituído por algo como 'contato@vibetech.com.br'
+const FROM_EMAIL = 'onboarding@resend.dev';
 
 export const sendLeadEmail = async (leadData: any, type: 'contact' | 'calculator' | 'diagnostic') => {
-  // Se não houver senha configurada, apenas ignoramos para não quebrar a aplicação (modo dev)
-  if (!process.env.SMTP_PASS) {
-    console.warn('⚠️ SMTP_PASS não configurado. E-mail não enviado para:', leadData.name);
-    return;
-  }
 
   const subjectMap = {
     contact: 'Nova Lead: Contato pelo Site',
@@ -112,25 +99,26 @@ export const sendLeadEmail = async (leadData: any, type: 'contact' | 'calculator
   `;
 
   try {
-    await transporter.sendMail({
-      from: `"Vibe Tech Notificações" <${process.env.SMTP_USER || 'vibetechvibe92@gmail.com'}>`,
-      to: 'vibetechvibe92@gmail.com', // Envia para o próprio e-mail administrativo
+    // 1. Envia o e-mail administrativo (Notificando a Vibe Tech)
+    const adminResponse = await resend.emails.send({
+      from: `Vibe Tech Notificações <${FROM_EMAIL}>`,
+      to: 'vibetechvibe92@gmail.com',
       subject: subject,
       html: htmlContent,
     });
-    console.log(`✅ E-mail ADMIN enviado para: vibetechvibe92@gmail.com`);
+    console.log(`✅ E-mail ADMIN enviado via Resend:`, adminResponse);
 
-    // Envia o e-mail para o cliente (lead)
+    // 2. Envia o e-mail de resposta automática para o cliente
     if (leadData.email) {
-      await transporter.sendMail({
-        from: `"Vibe Tech" <${process.env.SMTP_USER || 'vibetechvibe92@gmail.com'}>`,
+      const clientResponse = await resend.emails.send({
+        from: `Vibe Tech <${FROM_EMAIL}>`,
         to: leadData.email,
         subject: clientSubject,
         html: clientHtmlContent,
       });
-      console.log(`✅ E-mail CLIENTE enviado para: ${leadData.email}`);
+      console.log(`✅ E-mail CLIENTE enviado via Resend para: ${leadData.email}`, clientResponse);
     }
   } catch (error) {
-    console.error('❌ Erro ao enviar e-mail da lead:', error);
+    console.error('❌ Erro ao enviar e-mail via Resend:', error);
   }
 };

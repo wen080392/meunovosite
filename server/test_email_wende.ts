@@ -1,0 +1,1 @@
+﻿import { sendLeadEmail } from './src/mailer'; sendLeadEmail({name: 'Wenderson', email: 'wendersonmoreiralopes@gmail.com', source: 'contact'}, 'contact').then(() => console.log('Done')).catch(console.error);
