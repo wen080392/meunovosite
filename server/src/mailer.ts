@@ -5,12 +5,18 @@ dotenv.config();
 
 // Configuração do transportador de e-mail (usando Gmail como padrão para facilidade)
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  host: 'smtp.gmail.com',
+  port: 465,
+  secure: true,
   auth: {
     user: process.env.SMTP_USER || 'vibetechvibe92@gmail.com',
-    pass: process.env.SMTP_PASS || '', // Deve ser preenchido via App Passwords do Google
-  },
-});
+    pass: process.env.SMTP_PASS || '',
+  }
+} as any); // cast para any para podermos passar configurações de rede internas se necessário
+
+// Força o Node a usar IPv4 para as requisições de rede (resolve o erro IPv6 no Railway)
+import dns from 'dns';
+dns.setDefaultResultOrder('ipv4first');
 
 export const sendLeadEmail = async (leadData: any, type: 'contact' | 'calculator' | 'diagnostic') => {
   // Se não houver senha configurada, apenas ignoramos para não quebrar a aplicação (modo dev)
