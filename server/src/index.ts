@@ -5,6 +5,11 @@ import { PrismaClient } from '@prisma/client';
 import { sendLeadEmail } from './mailer';
 
 dotenv.config();
+console.log("=== AMBIENTE RAILWAY ===");
+console.log("Variáveis disponíveis:", Object.keys(process.env).join(", "));
+console.log("DATABASE_URL existe?", !!process.env.DATABASE_URL);
+console.log("DATABASE_URL vazia?", process.env.DATABASE_URL === "");
+console.log("========================");
 
 const app = express();
 const prisma = new PrismaClient({
